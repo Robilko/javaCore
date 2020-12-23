@@ -11,16 +11,16 @@ public class XOGame {
     public static final char EMPTY_DOT = '_';
     public static final Scanner SCANNER = new Scanner(System.in);
     public static final Random RANDOM = new Random();
-    public  static int mapSizeX, mapSizeY;
+    public  static int mapSize;
+    public  static int scoreToWin = 4;
 
     public static void initMap() {
-        mapSizeX = 5;
-        mapSizeY = 5;
+        mapSize = 5;
 
-        map = new char[mapSizeY][mapSizeX];
+        map = new char[mapSize][mapSize];
 
-        for (int y = 0; y < mapSizeY; y++) {
-            for (int x = 0; x < mapSizeX; x++) {
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
                 map[y][x] = EMPTY_DOT;
             }
         }
@@ -48,90 +48,65 @@ public class XOGame {
     }
 
     public static void uiTurn() {
-        int x, y;
-        do {
-            x = RANDOM.nextInt(mapSizeX);
-            y = RANDOM.nextInt(mapSizeY);
-        } while (!isEmptyCell(y, x));
+        int x = -1, y = -1;
+        boolean userWin = false;
+        for (int i = 0; i < mapSize; i++) {
+            for (int j = 0; j < mapSize; j++) {
+                if (isEmptyCell(i, j)) {
+                    map[i][j] = HUMAN_DOT;
+                    if (checkWin(HUMAN_DOT)) {
+                        x = j;
+                        y = i;
+                        userWin = true;
+                    }
+                    map[i][j] = EMPTY_DOT;
+                }
+            }
+        }
+        if (!userWin) {
+            do {
+                x = RANDOM.nextInt(mapSize);
+                y = RANDOM.nextInt(mapSize);
+            } while (!isEmptyCell(y, x));
+        }
         map[y][x] = PC_DOT;
     }
 
     public static boolean isValidCell(int y, int x) {
-        return (x >= 0 && x < mapSizeX && y >= 0 && y < mapSizeY );
+        return (x >= 0 && x < mapSize && y >= 0 && y < mapSize );
     }
 
     public static boolean isEmptyCell(int y, int x) {
         return map[y][x] == EMPTY_DOT;
     }
 
+    public static boolean checkLine(int x1, int y1, int x2, int y2, char someChar) {
+        for (int i = 0; i < scoreToWin; i++) {
+            if (map[x1 + i * x2][y1 + i * y2] != someChar) return false;
+        }
+        return true;
+    }
+
     public static boolean checkWin(char someChar) {
-        int scoreToWin = 4;
-        //Проверка выигрышных комбинаций по диагонали:
-
-        //проверка центральных диагоналей
-        int diagScore1 = 0;
-        int diagScore2 = 0;
-        for (int y = 0, x = 4; y < mapSizeY; y++, x--) {
-            if(map[y][y] == someChar) {
-                diagScore1++;
-                if(diagScore1 == scoreToWin) return true;
-            }
-            if(map[y][x] == someChar) {
-                diagScore2++;
-                if(diagScore2 == scoreToWin) return true;
-            }
+        for (int i = 0; i < scoreToWin; i++) {
+            //проверяем строки
+            if (checkLine(i, 0, 0, 1, someChar)) return true;
+            if (checkLine(i + 1, 0, 0, 1, someChar)) return true;
+            //проверяем столбцы
+            if (checkLine(0, i, 1, 0, someChar)) return true;
+            if (checkLine(0, i + 1, 1, 0, someChar)) return true;
         }
+        //проверяем диагонали
+        if (checkLine(0, 0, 1, 1, someChar) || checkLine(1, 1, 1, 1, someChar) || checkLine(0, 1, 1, 1, someChar) || checkLine(1, 0, 1 ,1, someChar)) return true;
+        if (checkLine(0, mapSize - 1, 1, -1, someChar) || checkLine(1, mapSize - 2, 1, -1, someChar) || checkLine(0, mapSize - 2, 1, -1, someChar) || checkLine(1, mapSize - 1, 1, -1, someChar)) return true;
 
-        //Проверка второстепенных диагоналей
-        diagScore1 = 0;
-        diagScore2 = 0;
-        for(int y = 0, x = 1; y < 4; y++, x++) {
-            if(map[y][x] == someChar) {
-                diagScore1++;
-                if(diagScore1 == scoreToWin) return true;
-            }
-            if(map[x][y] == someChar) {
-                diagScore2++;
-                if(diagScore2 == scoreToWin) return true;
-            }
-        }
-
-        diagScore1 = 0;
-        diagScore2 = 0;
-        for(int y = 4, x = 1; y > 0; y--, x++) {
-            if (map[y][x] == someChar) {
-                diagScore1++;
-                if(diagScore1 == scoreToWin) return true;
-            }
-            if (map[y - 1][x - 1] == someChar) {
-                diagScore2++;
-                if (diagScore2 == scoreToWin) return true;
-            }
-        }
-
-
-        // Проверка выигрышной комбинации по горизонтали или вертикали
-        for (int y = 0; y < mapSizeY; y++) {
-            int gorizontalScore = 0;
-            int verticalScore = 0;
-            for (int x = 0; x < mapSizeX; x++) {
-                if(map[y][x] == someChar) {
-                    gorizontalScore++;
-                    if(gorizontalScore == scoreToWin) return true;
-                }
-                if(map[x][y] == someChar) {
-                    verticalScore++;
-                    if(verticalScore == mapSizeX) return true;
-                }
-            }
-        }
         return false;
     }
 
 
     public static boolean mapIsFull() {
-        for (int y = 0; y < mapSizeY; y++) {
-            for (int x = 0; x < mapSizeX; x++) {
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
                 if (map[y][x] == EMPTY_DOT) return false;
             }
         }
