@@ -22,10 +22,10 @@ public class Main {
         //Проверка результатов выполнения заданий
         System.out.println("All the animals must to run - " + runDist + " meters, swim - " + swimDist + " meters & jump - " + jumpDist + " meters.\n");
         for(Animal animal : array) {
-            animal.info();
-            animal.run(runDist);
-            animal.swim(swimDist);
-            animal.jump(jumpDist);
+            System.out.println(animal.info());
+            System.out.println(animal.run(runDist));
+            System.out.println(animal.swim(swimDist));
+            System.out.println(animal.jump(jumpDist));
             System.out.println();
         }
     }
