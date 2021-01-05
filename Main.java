@@ -53,20 +53,22 @@ public class Main {
             while ((str = br.readLine()) != null) {
                 if (str.toLowerCase().contains(" " + word + " ")) return true;
             }
+            br.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return false;
     }
 
-    public static boolean findWordInFile(String word, File catalog) {
+    public static String findWordInFile(String word, File catalog) {
+        StringBuilder sb = new StringBuilder();
         File[] files;
         if ((files = catalog.listFiles()) != null) {
             for (File file : files) {
-                if (file.isFile() && findTheWord(word, file.getName())) return true;
+                if (file.isFile() && findTheWord(word, file.getName())) sb.append(file.getPath() + "\n");
             }
         }
-        return false;
+        return sb.toString();
     }
 
     public static void main(String[] args) {
@@ -86,12 +88,19 @@ public class Main {
         String fileName = scanner.nextLine();
         scanner.close();
 
-        if (findTheWord(word, fileName)) System.out.println("В данном файле присутствует слово \"" + word + "\"");
-        else System.out.println("В данном файле нет слова \"" + word + "\"");
+
+        System.out.println("************************************************");
+        System.out.println("Результат выполнения программы (Задание 6, пункт 3):\n");
+        if (findTheWord(word, fileName)) System.out.println("В файле " + fileName + " присутствует слово \"" + word + "\"");
+        else System.out.println("В файле " + fileName + " нет слова \"" + word + "\"");
 
         //4. ** Написать метод, проверяющий, есть ли указанное слово в папке
+
+        System.out.println("*************************************************");
+        System.out.println("Результат выполнения программы (Задание 6, пункт 4):\n");
         File rootProject = new File(".");
-        if (findWordInFile(word, rootProject)) System.out.println("В данной папке присутствует файл содержащий слово \"" + word + "\"");
+        String array = findWordInFile(word, rootProject);
+        if (array.length() > 0) System.out.println("В данной папке слово \"" + word + "\" найдено в следующих файлах:\n" + array);
         else System.out.println("В данной папке нет файла содержащего слово \"" + word + "\"");
     }
 }
