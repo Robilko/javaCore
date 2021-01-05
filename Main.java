@@ -59,6 +59,16 @@ public class Main {
         return false;
     }
 
+    public static boolean findWordInFile(String word, File catalog) {
+        File[] files;
+        if ((files = catalog.listFiles()) != null) {
+            for (File file : files) {
+                if (file.isFile() && findTheWord(word, file.getName())) return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
 
         //1.Создать 2 текстовых файла, примерно по 50-100 символов в каждом (особого значения не имеет);
@@ -78,5 +88,10 @@ public class Main {
 
         if (findTheWord(word, fileName)) System.out.println("В данном файле присутствует слово \"" + word + "\"");
         else System.out.println("В данном файле нет слова \"" + word + "\"");
+
+        //4. ** Написать метод, проверяющий, есть ли указанное слово в папке
+        File rootProject = new File(".");
+        if (findWordInFile(word, rootProject)) System.out.println("В данной папке присутствует файл содержащий слово \"" + word + "\"");
+        else System.out.println("В данной папке нет файла содержащего слово \"" + word + "\"");
     }
 }
