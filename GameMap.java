@@ -132,6 +132,7 @@ public class GameMap extends JPanel  {
 
     private void render(Graphics g) {
         if (!initializedMap) return;
+        Graphics2D g2 = (Graphics2D)g;
 
         int width = getWidth();
         int height = getHeight();
@@ -158,12 +159,15 @@ public class GameMap extends JPanel  {
                 }
 
                 if (field[y][x] == DOT_GAMER_1) {
-                    g.setColor(new Color(1,1,255));
-                    g.drawLine(x * cellWidth, y * cellHeight, x * cellWidth + cellWidth, y * cellHeight + cellHeight);
-                    g.drawLine(x * cellWidth + cellWidth, y * cellHeight, x * cellWidth, y * cellHeight + cellHeight);
+
+                    g2.setStroke(new BasicStroke(20));
+                    g2.setColor(new Color(1,1,255));
+                    g2.drawLine(x * cellWidth + cellWidth / 4, y * cellHeight + cellHeight / 4, x * cellWidth + cellWidth / 4 * 3, y * cellHeight + cellHeight / 4 * 3);
+                    g2.drawLine(x * cellWidth + cellWidth / 4 * 3, y * cellHeight + cellHeight / 4, x * cellWidth +  cellWidth / 4, y * cellHeight + cellHeight / 4 * 3);
                 } else if (field[y][x] == DOT_GAMER_2) {
-                    g.setColor(Color.RED);
-                    g.fillOval(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+                    g2.setStroke(new BasicStroke(20));
+                    g2.setColor(Color.RED);
+                    g2.drawOval(x * cellWidth + cellWidth / 4, y * cellHeight + cellHeight / 4, cellWidth / 2, cellWidth / 2);
                 } else {
                     throw new RuntimeException("Can't paint cellX " + x + " cellY " + y);
                 }
